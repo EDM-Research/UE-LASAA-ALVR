@@ -32,7 +32,7 @@ void AAnchor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 }
 
-bool AAnchor::createAnchor(FTransform extTrans)
+bool AAnchor::createAnchor()
 {
 	// check if the anchor component already exists
 	UOculusXRAnchorComponent* anchorComponent = Cast<UOculusXRAnchorComponent>(GetComponentByClass(UOculusXRAnchorComponent::StaticClass()));
@@ -42,9 +42,7 @@ bool AAnchor::createAnchor(FTransform extTrans)
 		return false;
 
 	UE_LOG(LogTemp, Display, TEXT("Creating anchor"));
-
-	this->setGtExtPose(extTrans);
-
+	
 	// create the anchor via oculus sdk, and save the anchor once created
 	EOculusXRAnchorResult::Type result;
 	OculusXRAnchors::FOculusXRAnchors::CreateSpatialAnchor(this->GetActorTransform(), this,

@@ -20,9 +20,11 @@ public:
 	UAlignmentComponent();
 
 	// class to spawn external anchors
-	TSubclassOf<AActor> extAnchorClass;
-	// class to spawn internal anchors 
-	TSubclassOf<AAnchor> intAnchorClass;
+	UPROPERTY(BlueprintReadWrite, Category = "Default", meta = (ExposeOnSpawn="true"))
+	TSubclassOf<AActor> m_extAnchorClass;
+	// class to spawn internal anchors
+	UPROPERTY(BlueprintReadWrite, Category = "Default", meta = (ExposeOnSpawn="true"))
+	TSubclassOf<AAnchor> m_intAnchorClass;
 
 	// is executed every frame if tick is enabled
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -35,15 +37,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
 	bool align();
 
-	// configure component (must be called to let the component work)
-	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
-	void configureAlignmentComponent(TSubclassOf<AAnchor> INTAnchorClass, TSubclassOf<AActor> EXTAnchorClass, int alignmentMode, bool shouldTick);
-
+	UPROPERTY(BlueprintReadWrite, Category = "Default", meta = (ExposeOnSpawn="true"))
 	// the alignment mode: 0 - weighted, 1 - static
 	int mode;
-
-	// should component tick or not
-	bool tick = true;
 
 private:
 	// indicates whether the anchors are localized

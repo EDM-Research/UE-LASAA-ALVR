@@ -41,8 +41,7 @@ class LASAA_API AAnchor : public AActor
 	GENERATED_BODY()
 
 private:
-	// external camera pose
-	FTransform gtExtPose;
+	
 	FString uuid;
 	USceneComponent* sceneComponent;
 	// the actor that is the 3D correspondence of this anchor
@@ -62,11 +61,15 @@ public:
 	// handle to all anchors
 	inline static TArray<AAnchor*> allAnchors = TArray<AAnchor*>();
 
+	// external camera pose
+	UPROPERTY(BlueprintReadWrite, Category = "Default", meta = (ExposeOnSpawn="true"))
+	FTransform gtExtPose;
+
 	AAnchor();
 	
 	// creates the spatial anchor
 	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
-	bool createAnchor(FTransform extTrans);
+	bool createAnchor();
 
 	// erases the spatial anchor
 	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")

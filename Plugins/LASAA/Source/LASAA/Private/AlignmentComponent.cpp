@@ -13,7 +13,7 @@ UAlignmentComponent::UAlignmentComponent()
 void UAlignmentComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SetComponentTickEnabled(false);
+	SetComponentTickEnabled(true);
 }
 
 // Called every frame
@@ -26,19 +26,17 @@ void UAlignmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	{
 		if(numAnchorsToLoad < 0)
 		{
-			numAnchorsToLoad = AAnchor::loadAnchors(this->extAnchorClass, this->intAnchorClass, this->GetOwner());
+			numAnchorsToLoad = AAnchor::loadAnchors(this->m_extAnchorClass, this->m_intAnchorClass, this->GetOwner());
 		}
 		if (AAnchor::allAnchors.Num() < numAnchorsToLoad)
 			return;
 		localizedAnchors = true;
 	}
 
-	// align once with the loaded anchors
-	bool ret = align();
-	// disable tick if necessary, but only after the align has happened once
-	if(!tick && ret)
+	if (localizedAnchors)
 	{
-		SetComponentTickEnabled(false);
+		// align once with the loaded anchors
+		align();
 	}
 }
 
@@ -125,14 +123,4 @@ bool UAlignmentComponent::align()
 	transform = transform * transformation ;
 	GetOwner()->SetActorTransform(transform);
 	return true;
-}
-
-void UAlignmentComponent::configureAlignmentComponent(TSubclassOf<AAnchor> INTAnchorClass,
-	TSubclassOf<AActor> EXTAnchorClass, int alignmentMode, bool shouldTick)
-{
-	intAnchorClass = INTAnchorClass;
-	extAnchorClass = EXTAnchorClass;
-	mode = alignmentMode;
-	tick = shouldTick;
-	SetComponentTickEnabled(true);
 }

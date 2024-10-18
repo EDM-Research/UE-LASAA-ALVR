@@ -1,9 +1,6 @@
 #include "Anchor.h"
 #include "JsonObjectConverter.h"
 #include "Serialization/JsonSerializer.h"
-#include "OculusXRAnchors.h"
-#include "OculusXRAnchorComponent.h"
-#include "OculusXRAnchorBPFunctionLibrary.h"
 
 // Sets default values
 AAnchor::AAnchor()
@@ -32,52 +29,15 @@ void AAnchor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 }
 
-bool AAnchor::createAnchor()
+bool AAnchor::createAnchor(FString id)
 {
-	// check if the anchor component already exists
-	UOculusXRAnchorComponent* anchorComponent = Cast<UOculusXRAnchorComponent>(GetComponentByClass(UOculusXRAnchorComponent::StaticClass()));
-
-	// if exists, do not create a new one
-	if(anchorComponent != nullptr)
-		return false;
 
 	UE_LOG(LogTemp, Display, TEXT("Creating anchor"));
 	
-	// create the anchor via oculus sdk, and save the anchor once created
-	EOculusXRAnchorResult::Type result;
-	OculusXRAnchors::FOculusXRAnchors::CreateSpatialAnchor(this->GetActorTransform(), this,
-		FOculusXRSpatialAnchorCreateDelegate::CreateLambda([this](EOculusXRAnchorResult::Type result, UOculusXRAnchorComponent* anchorComponent)
-		{
-			UE_LOG(LogTemp, Display, TEXT("Anchor created: %d"), result);
-			this->setUuid(anchorComponent->GetUUID().ToString());
-			this->save();
-		}), result);
-	return true;
-}
-
-bool AAnchor::save()
-{
-	// check if the anchor component exists
-	UOculusXRAnchorComponent* anchorComponent = Cast<UOculusXRAnchorComponent>(GetComponentByClass(UOculusXRAnchorComponent::StaticClass()));
-
-	// if not exists, do not try to save
-	if(anchorComponent == nullptr)
-		return false;
-
-	UE_LOG(LogTemp, Display, TEXT("Saving anchor"));
-
-	// save the anchor in the headset and write uuid with external pose to JSON file
-	EOculusXRAnchorResult::Type result;
-	OculusXRAnchors::FOculusXRAnchors::SaveAnchor(anchorComponent, EOculusXRSpaceStorageLocation::Local,
-		FOculusXRAnchorSaveDelegate::CreateLambda([this](EOculusXRAnchorResult::Type result, UOculusXRAnchorComponent* anchorComponent)
-		{
-			// save uuid and orb pose to file
-			UE_LOG(LogTemp, Display, TEXT("Saved anchor: %d"), result);
-
-			this->addToList();
-			this->writeToJson();
-		}), result
-		);
+	this->setUuid(id);
+	this->addToList();
+	this->writeToJson();
+	
 	return true;
 }
 
@@ -129,7 +89,7 @@ void AAnchor::readFromJson()
 
 void AAnchor::erase()
 {
-	// check if anchor component exists
+	/*// check if anchor component exists
 	UOculusXRAnchorComponent* anchorComponent = Cast<UOculusXRAnchorComponent>(GetComponentByClass(UOculusXRAnchorComponent::StaticClass()));
 
 	// if not exists, remove the anchor
@@ -149,12 +109,12 @@ void AAnchor::erase()
 			this->eraseFromList();
 			this->writeToJson();
 			this->Destroy();
-		}), result);
+		}), result);*/
 }
 
 int AAnchor::loadAnchors(UClass* extClass, UClass* anchorClass, AActor* newOwner)
 {
-	UE_LOG(LogTemp, Display, TEXT("Loading anchors from %s"), *filePath);
+	/*UE_LOG(LogTemp, Display, TEXT("Loading anchors from %s"), *filePath);
 
 	// read anchor uuids and external poses from JSON file into anchorStorage
 	readFromJson();
@@ -209,7 +169,8 @@ int AAnchor::loadAnchors(UClass* extClass, UClass* anchorClass, AActor* newOwner
 			}
 		}), result
 		);
-	return uuids.Num();
+	return uuids.Num();*/
+	return 0;
 }
 
 // delete all anchors, TODO erase anchors

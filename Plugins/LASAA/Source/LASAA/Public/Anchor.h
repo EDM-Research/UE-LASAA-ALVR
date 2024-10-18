@@ -69,7 +69,7 @@ public:
 	
 	// creates the spatial anchor
 	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
-	bool createAnchor();
+	bool createAnchor(FString id);
 
 	// erases the spatial anchor
 	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
@@ -104,7 +104,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
 	static double getAvgPairDistance();
 private:
-	bool save();
 
 	// erase this anchor from storage
 	void eraseFromList();

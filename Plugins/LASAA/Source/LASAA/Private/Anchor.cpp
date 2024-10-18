@@ -16,6 +16,8 @@ void AAnchor::BeginPlay()
 {
 	Super::BeginPlay();
 	allAnchors.Add(this);
+	this->addToList();
+	this->writeToJson();
 }
 
 void AAnchor::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -27,18 +29,6 @@ void AAnchor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		extPair->Destroy();
 	}
-}
-
-bool AAnchor::createAnchor(FString id)
-{
-
-	UE_LOG(LogTemp, Display, TEXT("Creating anchor"));
-	
-	this->setUuid(id);
-	this->addToList();
-	this->writeToJson();
-	
-	return true;
 }
 
 void AAnchor::eraseFromList()

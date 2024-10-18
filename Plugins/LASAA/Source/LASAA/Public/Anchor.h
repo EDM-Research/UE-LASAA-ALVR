@@ -42,7 +42,7 @@ class LASAA_API AAnchor : public AActor
 
 private:
 	
-	FString uuid;
+	
 	USceneComponent* sceneComponent;
 	// the actor that is the 3D correspondence of this anchor
 	AActor* extPair;
@@ -65,12 +65,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Default", meta = (ExposeOnSpawn="true"))
 	FTransform gtExtPose;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Default", meta = (ExposeOnSpawn="true"))
+	FString uuid;
+
 	AAnchor();
 	
-	// creates the spatial anchor
-	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
-	bool createAnchor(FString id);
-
 	// erases the spatial anchor
 	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
 	void erase();

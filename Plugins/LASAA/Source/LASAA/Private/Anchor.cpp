@@ -77,6 +77,7 @@ void AAnchor::readFromJson()
 	FJsonObjectConverter::JsonObjectToUStruct(jObj.ToSharedRef(), FAnchorStruct::StaticStruct(), &anchorStorage, 0,0);
 }
 
+//TODO Change to OSC calls
 void AAnchor::erase()
 {
 	/*// check if anchor component exists
@@ -102,6 +103,7 @@ void AAnchor::erase()
 		}), result);*/
 }
 
+//TODO Change to OSC calls
 int AAnchor::loadAnchors(UClass* extClass, UClass* anchorClass, AActor* newOwner)
 {
 	/*UE_LOG(LogTemp, Display, TEXT("Loading anchors from %s"), *filePath);
@@ -163,7 +165,7 @@ int AAnchor::loadAnchors(UClass* extClass, UClass* anchorClass, AActor* newOwner
 	return 0;
 }
 
-// delete all anchors, TODO erase anchors
+//TODO Change to OSC calls
 void AAnchor::resetAnchors()
 {
 	anchorStorage.anchorTransforms.Empty();
@@ -177,6 +179,8 @@ void AAnchor::resetAnchors()
 	}
 	writeToJson();
 }
+
+//TODO Every frame, change the positions of the internal anchors
 
 void AAnchor::setUuid(FString id)
 {

@@ -21,23 +21,7 @@ void UAlignmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// if not localized yet, try to load or wait for them to localize
-	if(localizedAnchors == false)
-	{
-		if(numAnchorsToLoad < 0)
-		{
-			numAnchorsToLoad = AAnchor::loadAnchors(this->m_extAnchorClass, this->m_intAnchorClass, this->GetOwner());
-		}
-		if (AAnchor::allAnchors.Num() < numAnchorsToLoad)
-			return;
-		localizedAnchors = true;
-	}
-
-	if (localizedAnchors)
-	{
-		// align once with the loaded anchors
-		align();
-	}
+    align();
 }
 
 // change the mode and return a string for debugging purposes

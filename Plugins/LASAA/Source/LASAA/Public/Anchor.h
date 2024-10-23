@@ -73,14 +73,16 @@ public:
 	// erases the spatial anchor
 	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
 	void erase();
-
 	// load anchors from storage
 	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
-	static int loadAnchors(UClass* extClass, UClass* anchorClass,AActor* newOwner);
+	static void loadAnchors(TArray<FString>& uuids, TArray<FTransform>& transforms);
 	// delete all anchors
 	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
 	static void resetAnchors();	
-	
+	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
+	void saveAnchor();
+
+	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
 	FString getUuid();
 	// gets location of external anchor (from extPair)
 	FVector getCurrentExtLocation();
@@ -102,6 +104,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
 	static double getAvgPairDistance();
+
+	// Convert OSC message to uuids and transforms
+	UFUNCTION(BlueprintCallable, Category="AnchorFunctions")
+	static void TransformOSCALVRMessage(TArray<FString>& uuids, TArray<FTransform>& transforms, const TArray<float>& oscMessageFloats, const TArray<FString>& oscMessageStrings);
+	
 private:
 
 	// erase this anchor from storage

@@ -16,8 +16,7 @@ void AAnchor::BeginPlay()
 {
 	Super::BeginPlay();
 	allAnchors.Add(this);
-	this->addToList();
-	this->writeToJson();
+
 }
 
 void AAnchor::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -58,14 +57,14 @@ void AAnchor::writeToJson()
 	FString outputString;
 	TSharedRef<TJsonWriter<>> writer = TJsonWriterFactory<>::Create(&outputString);
 	FJsonSerializer::Serialize(outJsonObject, writer);
-	FFileHelper::SaveStringToFile(outputString, *filePath);
+	FFileHelper::SaveStringToFile(outputString, *(FPaths::ProjectDir() + filePath));
 	UE_LOG(LogTemp, Display, TEXT("Wrote %d anchors to %s"), anchorStorage.anchorUuids.Num(), *filePath);
 }
 
 void AAnchor::readFromJson()
 {
 	FString out;
-	FFileHelper::LoadFileToString(out, *filePath);
+	FFileHelper::LoadFileToString(out, *(FPaths::ProjectDir() + filePath));
 	
 	TSharedPtr<FJsonObject> jObj;
 	TSharedRef<TJsonReader<>> reader = TJsonReaderFactory<>::Create(out);
@@ -104,65 +103,27 @@ void AAnchor::erase()
 }
 
 //TODO Change to OSC calls
-int AAnchor::loadAnchors(UClass* extClass, UClass* anchorClass, AActor* newOwner)
+void AAnchor::loadAnchors(TArray<FString>& uuids, TArray<FTransform>& transforms)
 {
-	/*UE_LOG(LogTemp, Display, TEXT("Loading anchors from %s"), *filePath);
+	UE_LOG(LogTemp, Display, TEXT("Loading anchors from %s"), *filePath);
 
 	// read anchor uuids and external poses from JSON file into anchorStorage
 	readFromJson();
-
-	uint32 maxToLoad = 64;
-
-	// obtain uuids
-	EOculusXRSpaceStorageLocation queryLocation = EOculusXRSpaceStorageLocation::Local;
-	TArray<FOculusXRUUID> uuids;
-	for (FString strid : anchorStorage.anchorUuids)
-	{
-		FOculusXRUUID uuid = UOculusXRAnchorBPFunctionLibrary::StringToAnchorUUID(strid);
-		uuids.Add(uuid);
-	}
-
-	UE_LOG(LogTemp, Display, TEXT("%d UUIDS loaded"), uuids.Num());
 	
-	// Query the anchors with the uuids from anchorStorage
-	EOculusXRAnchorResult::Type result;
-	OculusXRAnchors::FOculusXRAnchors::QueryAnchors(uuids, queryLocation,
-		FOculusXRAnchorQueryDelegate::CreateLambda([extClass, anchorClass, newOwner](EOculusXRAnchorResult::Type result, const TArray<FOculusXRSpaceQueryResult>& results)
-		{
-			// if query successfull
-			if(result == EOculusXRAnchorResult::Success)
-			{
-				// create each of the anchors
-				for(auto& it : results)
-				{
-					UE_LOG(LogTemp, Display, TEXT("Spawning with uuid: %s"), *it.UUID.ToString())
-					UE_LOG(LogTemp, Display, TEXT("Before spawning"))
-					// Log the extclass and anchorclass
-					// spawn the spatial anchor using the given class (must be derived from AAnchor class)
-					AActor* spawned = UOculusXRAnchorBPFunctionLibrary::SpawnActorWithAnchorQueryResults(
-						 newOwner->GetWorld(),
-						it,
-						anchorClass,
-						nullptr,
-						nullptr,
-						ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-					UE_LOG(LogTemp, Display, TEXT("After spawning"))
-					// cast to AAnchor and fill the uuid and gt external pose
-					AAnchor* spawnedAnchor = Cast<AAnchor>(spawned);
-					spawnedAnchor->setUuid(it.UUID.ToString());
-					spawnedAnchor->setGtExtPose(anchorStorage.getTransform(it.UUID.ToString()));
+	uuids = anchorStorage.anchorUuids;
+	transforms = anchorStorage.anchorTransforms;
+	
+	return;
+}
 
-					// also spawn the external anchor in relation to the anchor parent
-					AActor* extAnchor = newOwner->GetWorld()->SpawnActor<AActor>(extClass);
-					extAnchor->SetActorTransform(anchorStorage.getTransform(it.UUID.ToString()));
-					extAnchor->AttachToActor(newOwner, FAttachmentTransformRules::KeepRelativeTransform);
-					spawnedAnchor->setExtPairAndCalibrationOffset(extAnchor);
-				}
-			}
-		}), result
-		);
-	return uuids.Num();*/
-	return 0;
+void AAnchor::saveAnchor()
+{
+	UE_LOG(LogTemp, Display, TEXT("Saving anchor to JSON"), *filePath);
+
+	this->addToList();
+	writeToJson();
+	
+	return;
 }
 
 //TODO Change to OSC calls
@@ -178,6 +139,34 @@ void AAnchor::resetAnchors()
 			anchor->Destroy();
 	}
 	writeToJson();
+}
+
+void AAnchor::TransformOSCALVRMessage(TArray<FString>& uuids, TArray<FTransform>& transforms, const TArray<float>& oscMessageFloats, const TArray<FString>& oscMessageStrings){
+	// oscMessage is a list of floats, where every first float represents the uuid, the next 3 floats represent the location, and the next 4 floats represent the quaternion
+
+	// Parse the oscMessage into uuids and transforms
+	for(int i = 0; i < oscMessageFloats.Num(); i+=7)
+	{
+		FVector location = FVector(oscMessageFloats[i], oscMessageFloats[i+1], oscMessageFloats[i+2]);
+		FQuat quaternion = FQuat(oscMessageFloats[i+3], oscMessageFloats[i+4], oscMessageFloats[i+5], oscMessageFloats[i+6]);
+
+		// Convert from openxr to Unreal coordinate system
+		FVector transformedLocation = FVector(-location.Z, location.X, location.Y);
+
+		FTransform transform = FTransform(quaternion, transformedLocation);
+
+		// Convert from meters to centimeters
+		transform.SetLocation(transform.GetLocation() * 100);
+
+		transforms.Add(transform);
+	}
+
+	for (int i = 0; i < oscMessageStrings.Num(); i++)
+	{
+		FString uuid = oscMessageStrings[i];
+		uuids.Add(uuid);
+	}
+
 }
 
 //TODO Every frame, change the positions of the internal anchors

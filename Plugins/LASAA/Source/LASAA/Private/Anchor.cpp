@@ -76,33 +76,15 @@ void AAnchor::readFromJson()
 	FJsonObjectConverter::JsonObjectToUStruct(jObj.ToSharedRef(), FAnchorStruct::StaticStruct(), &anchorStorage, 0,0);
 }
 
-//TODO Change to OSC calls
+//TODO Send osc to also remove in ALVR
 void AAnchor::erase()
 {
-	/*// check if anchor component exists
-	UOculusXRAnchorComponent* anchorComponent = Cast<UOculusXRAnchorComponent>(GetComponentByClass(UOculusXRAnchorComponent::StaticClass()));
-
-	// if not exists, remove the anchor
-	if(anchorComponent == nullptr)
-	{
-		this->eraseFromList();
-		this->writeToJson();
-		this->Destroy();
-		return;
-	}
-
-	// erase the anchor, once erased, also remove from storage
-	EOculusXRAnchorResult::Type result;
-	OculusXRAnchors::FOculusXRAnchors::EraseAnchor(anchorComponent,
-		FOculusXRAnchorEraseDelegate::CreateLambda([this](EOculusXRAnchorResult::Type result, FOculusXRUUID UUID)
-		{
-			this->eraseFromList();
-			this->writeToJson();
-			this->Destroy();
-		}), result);*/
+    this->eraseFromList();
+    this->writeToJson();
+    this->Destroy();
+    return;
 }
 
-//TODO Change to OSC calls
 void AAnchor::loadAnchors(TArray<FString>& uuids, TArray<FTransform>& transforms)
 {
 	UE_LOG(LogTemp, Display, TEXT("Loading anchors from %s"), *filePath);
@@ -126,7 +108,6 @@ void AAnchor::saveAnchor()
 	return;
 }
 
-//TODO Change to OSC calls
 void AAnchor::resetAnchors()
 {
 	anchorStorage.anchorTransforms.Empty();
@@ -168,8 +149,6 @@ void AAnchor::TransformOSCALVRMessage(TArray<FString>& uuids, TArray<FTransform>
 	}
 
 }
-
-//TODO Every frame, change the positions of the internal anchors
 
 void AAnchor::setUuid(FString id)
 {

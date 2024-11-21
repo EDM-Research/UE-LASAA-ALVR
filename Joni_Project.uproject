@@ -91,6 +91,10 @@
 				"Win64",
 				"Android"
 			]
+		},
+		{
+			"Name": "StaticMeshEditorModeling",
+			"Enabled": true
 		}
 	]
 }

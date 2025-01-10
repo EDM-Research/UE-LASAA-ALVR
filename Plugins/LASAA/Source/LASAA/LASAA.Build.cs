@@ -25,7 +25,7 @@ public class LASAA : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core","OculusXRAnchors", "Json", "JsonUtilities", "Eigen" 
+				"Core", "Json", "JsonUtilities", "Eigen" 
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

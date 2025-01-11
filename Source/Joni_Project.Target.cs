@@ -8,7 +8,7 @@ public class Joni_ProjectTarget : TargetRules
 	public Joni_ProjectTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-		DefaultBuildSettings = BuildSettingsVersion.V5;
+		DefaultBuildSettings = BuildSettingsVersion.V4;
 
 		ExtraModuleNames.AddRange( new string[] { "Joni_Project" } );
 	}

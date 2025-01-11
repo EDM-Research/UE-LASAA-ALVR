@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.4",
+	"EngineAssociation": "5.3",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -61,8 +61,7 @@
 			"SupportedTargetPlatforms": [
 				"Win64",
 				"Linux",
-				"Android",
-				"VisionOS"
+				"Android"
 			]
 		},
 		{
@@ -80,8 +79,7 @@
 			"SupportedTargetPlatforms": [
 				"Win64",
 				"Linux",
-				"Android",
-				"VisionOS"
+				"Android"
 			]
 		},
 		{

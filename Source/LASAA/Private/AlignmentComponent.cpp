@@ -103,11 +103,16 @@ bool UAlignmentComponent::align()
 	}
 
 	// Transform camera instead of content
-	AActor* player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	// AActor* player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	// FTransform transformation;
+	// transformation.SetFromMatrix(transformationMat.Inverse());
+	// FTransform playerTransform = player->GetActorTransform();
+	// playerTransform = playerTransform * transformation;
+	// player->SetActorTransform(playerTransform);
 	FTransform transformation;
-	transformation.SetFromMatrix(transformationMat.Inverse());
-	FTransform playerTransform = player->GetActorTransform();
-	playerTransform = playerTransform * transformation;
-	player->SetActorTransform(playerTransform);
+	transformation.SetFromMatrix(transformationMat);
+	FTransform transform = GetOwner()->GetActorTransform();
+	transform = transform * transformation ;
+	GetOwner()->SetActorTransform(transform);
 	return true;
 }

@@ -1,6 +1,7 @@
 #include "AlignmentComponent.h"
 #include "CloudRegistration.h"
 #include "Anchor.h"
+#include "Kismet/GameplayStatics.h"
 
 UAlignmentComponent::UAlignmentComponent()
 {
@@ -14,6 +15,7 @@ void UAlignmentComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SetComponentTickEnabled(true);
+	SetComponentTickInterval(0.1);
 }
 
 // Called every frame
@@ -100,11 +102,12 @@ bool UAlignmentComponent::align()
 		}
 	}
 
-	// apply transformation
+	// Transform camera instead of content
+	AActor* player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	FTransform transformation;
-	transformation.SetFromMatrix(transformationMat);
-	FTransform transform = GetOwner()->GetActorTransform();
-	transform = transform * transformation ;
-	GetOwner()->SetActorTransform(transform);
+	transformation.SetFromMatrix(transformationMat.Inverse());
+	FTransform playerTransform = player->GetActorTransform();
+	playerTransform = playerTransform * transformation;
+	player->SetActorTransform(playerTransform);
 	return true;
 }

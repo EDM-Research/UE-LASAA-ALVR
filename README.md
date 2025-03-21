@@ -2,6 +2,9 @@
 
 This repository should be used in conjunction with a [custom version of the ALVR client](https://github.com/EDM-Research/ALVR-SpatialAnchors/tree/spatial_anchors).
 
+This is an ALVR enabled version of the [standalone LASAA](https://github.com/EDM-Research/UE-LASAA).
+
+
 ## About
 ![](/img/edm_logo.png) &nbsp;&nbsp;&nbsp;
 ![](/img/Max-R_Logo.png)
